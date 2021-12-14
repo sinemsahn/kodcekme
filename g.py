@@ -39,27 +39,30 @@ def my_generator(benign_files, malicious_files,
     assert len(benign_files) >= n_samples_per_class
     assert len(malicious_files) >= n_samples_per_class
     while True:
-        # rastgele ozelliklerini cikartir
+     
         ben_features = [
             extract_features(sha, path_to_files_dir=path_to_benign_files,
                              hash_dim=features_length)
             for sha in np.random.choice(benign_files, n_samples_per_class,
                                         replace=False)
         ]
+
         mal_features = [
             extract_features(sha, path_to_files_dir=path_to_malicious_files,
                              hash_dim=features_length)
             for sha in np.random.choice(malicious_files, n_samples_per_class,
                                         replace=False)
         ]
+    
+        all_features = ben_features + mal_features
+
         labels = [0 for i in range(n_samples_per_class)] + [1 for i in range(
             n_samples_per_class)]
-        #etiketlemelerini yapar
+
         idx = np.random.choice(range(batch_size), batch_size)
         all_features = np.array([np.array(all_features[i]) for i in idx])
         labels = np.array([labels[i] for i in idx])
         yield all_features, labels
-        #tum ozellik ve etiketlemeleri doner
 
 
 def make_training_data_generator(features_length, batch_size):
@@ -82,7 +85,7 @@ def make_training_data_generator(features_length, batch_size):
 
 
 def my_model(input_length=1024):
-    #model oluşturuyor diyelim
+    #model olusturuyor diyelim
     input = layers.Input(shape=(input_length,), dtype='float32', name='input')
 
     x = layers.Dense(1024, activation='relu')(input)
@@ -124,6 +127,9 @@ if __name__ == '__main__':
     same_model = load_model('my_model.h5') 
 
     ###modeli predict ettirmeli ilk sonra devam etmeli
+
+
+
 
 
 
