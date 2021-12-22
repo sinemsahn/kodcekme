@@ -65,6 +65,7 @@ def my_generator(benign_files, malicious_files,
         yield all_features, labels
 
 
+
 def make_training_data_generator(features_length, batch_size):
     path_to_training_benign_files = '~/Desktop/verilerim/egitim/normal/benignware/'
     path_to_training_malicious_files = '~/Desktop/verilerim/egitim/zararli/'
@@ -127,10 +128,20 @@ if __name__ == '__main__':
     same_model = load_model('my_model.h5') 
 
     ###modeli predict ettirmeli ilk sonra devam etmeli
+    #predict icin kullanicidan aldigi veriyi ayni forma cevirip 
+#ynew = model.predict_classes(Xnew)
+# show the inputs and predicted outputs
+#for i in range(len(Xnew)):
+#	print("X=%s, Predicted=%s" % (Xnew[i], ynew[i]))
+#extract_featuresa gonderip predict dersek
+    file_path=''
+    sha=''
+   
+    file_features = [
+            extract_features(sha, path_to_files_dir=file_path,
+                             hash_dim=features_length)
+        ]
+    label_file = model.predict_classes(file_features)
 
-
-
-
-
-
-
+    for i in range(len(file_features)):
+        print("%s, Predicted= %s" % (file_features[i],label_file[i]))
