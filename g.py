@@ -14,6 +14,19 @@ def read_file(sha, dir):
         file = fp.read()
     return file
 
+def extract_file(file, hash_dim=1024, split_regex=r"\s+"):
+
+    tokens = re.split(pattern=split_regex, string=file)
+    token_hash_buckets = [
+        (murmur.string_hash(w) % (hash_dim - 1) + 1) for w in tokens
+    ]
+    token_bucket_counts = np.zeros(hash_dim)
+    buckets, counts = np.unique(token_hash_buckets, return_counts=True)
+    for bucket, count in zip(buckets, counts):
+        token_bucket_counts[bucket] = count
+    return np.array(token_bucket_counts)
+
+
 
 def extract_features(sha, path_to_files_dir,
                      hash_dim=1024, split_regex=r"\s+"):
@@ -138,7 +151,7 @@ if __name__ == '__main__':
     sha=''
    
     file_features = [
-            extract_features(sha, path_to_files_dir=file_path,
+            extract_file(sha, path_to_files_dir=file_path,
                              hash_dim=features_length)
         ]
     label_file = model.predict_classes(file_features)
